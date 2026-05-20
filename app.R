@@ -1,7 +1,8 @@
 #
-#　ENQview_lite ver2.0
+#　ENQview_lite ver3.x
 #
 # 履歴
+#. ver3.x 2026/05/20 から作業開始。
 #　ver2.0-　2025/10/08
 #' 履歴
 #' 2025/10/06 昨日2025/10/05の最終版
@@ -83,6 +84,12 @@ ui <- fluidPage(
                    h3("χ2乗検定"),
                    verbatimTextOutput("chisq_test")
           ),
+          
+          tabPanel("Grid回答 General mosaic表示",
+                   h2("Grid回答mosaic表示"),
+                   plotOutput("GridAnswerG_mosaic", width = 600, height = 600),
+                   plotOutput("GridAnswerG_CA", width = 700, height = 700)
+          ),
 
           tabPanel("MA plot(Bar)",
                    h2("MA変数集計"),
@@ -104,12 +111,6 @@ ui <- fluidPage(
                    h2("層化MA変数集計（Legendなし）"),
                    plotOutput("MAplot_lineDot2", width = 600, height = 400),
                    plotOutput("MAplot_lineDotwarp", width = 600, height = 600)
-          ),
-
-          tabPanel("Grid回答 General mosaic表示",
-                   h2("Grid回答mosaic表示"),
-                   plotOutput("GridAnswerG_mosaic", width = 600, height = 600),
-                   plotOutput("GridAnswerG_CA", width = 700, height = 700)
           ),
 
           tabPanel("単変数check",
