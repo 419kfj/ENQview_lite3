@@ -1,4 +1,6 @@
-# ENQview_lite3
+# ENQview_lite3_dev
+
+このbranchは、ENQview_lite3 の開発用のbrabch
 
 ## 公開URL
 
