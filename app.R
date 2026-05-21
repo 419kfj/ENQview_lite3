@@ -30,105 +30,243 @@ if (file.exists("DESCRIPTION")) {
   app_version <- "3.xx-explor-fix"
 }
 
+
 ui <- fluidPage(
   titlePanel(paste("ENQview_lite  Version:", app_version)),
   
-  tabPanel(
-    "基本集計",
-    sidebarLayout(   # ← ★ ここを sidebarLayout() に変更！
-      sidebarPanel(
-        fileInput("rda_file", "RDAファイルを選択", accept = ".rda"),
-        uiOutput("rda_objects_ui"),
-        uiOutput("variables_ui"),
-        tags$hr(),
-        uiOutput("cross_var_ui"),
-        uiOutput("layer_var_ui"),
-        uiOutput("variables2_ui"),
-        uiOutput("hist_var_ui")
-      ),
-      
-      mainPanel(
-        tabsetPanel(
-          type = "tabs",
-          
-          tabPanel("単変数集計",
-                   h2("棒グラフと度数分布"),
-                   plotOutput("barchart"),
-                   DT::dataTableOutput("simple_table")
-          ),
-          
-          tabPanel("2変数分析",
-                   h2("クロス集計（gtsummary::tbl_cross )"),
-                   gt_output(outputId = "my_gt_table2"),
-                   plotOutput("crosschart", width = 600, height = 600),
-                   h3("χ2乗検定"),
-                   verbatimTextOutput("chisq_test2"),
-                   h3("クロス表の対応分析"),
-                   plotOutput("Crosstable_CA")
-          ),
-          
-          tabPanel("pairs",
-                   h2("GGally::pairs"),
-                   plotOutput("pairs", width = 600, height = 600)
-          ),
-          
-          tabPanel("pairs_multi",
-                   h2("GGally::pairs 多変数"),
-                   plotOutput("pairs_multi", width = 900, height = 900)
-          ),
-          
-          tabPanel("2変数分析（層化）",
-                   h2("クロス集計（gtsummary::tbl_cross )"),
-                   gt_output(outputId = "my_gt_table"),
-                   plotOutput("crosschart2", width = 900, height = 600),
-                   h3("χ2乗検定"),
-                   verbatimTextOutput("chisq_test")
-          ),
-          
-          tabPanel("Grid回答 General mosaic表示",
-                   h2("Grid回答mosaic表示"),
-                   plotOutput("GridAnswerG_mosaic", width = 600, height = 600),
-                   plotOutput("GridAnswerG_CA", width = 700, height = 700)
-          ),
-          
-          tabPanel("MA plot(Bar)",
-                   h2("MA変数集計"),
-                   plotOutput("MAplot", width = 600, height = 600)
-          ),
-          
-          tabPanel("MA plot(Dot)",
-                   h2("MA変数集計"),
-                   plotOutput("MAplot_Dot", width = 600, height = 600)
-          ),
-          
-          tabPanel("層化 MA plot",
-                   h2("層化MA変数集計"),
-                   plotOutput("MAplot_lineDot", width = 600, height = 400),
-                   plotOutput("MAplot_lineDotwarp", width = 600, height = 600)
-          ),
-          
-          tabPanel("層化 MA plot2",
-                   h2("層化MA変数集計（Legendなし）"),
-                   plotOutput("MAplot_lineDot2", width = 600, height = 400),
-                   plotOutput("MAplot_lineDotwarp", width = 600, height = 600)
-          ),
-          
-          tabPanel("単変数check",
-                   h2("棒グラフと度数分布"),
-                   plotOutput("barchart2"),
-                   DT::dataTableOutput("simple_table2")
-          ),
-          
-          tabPanel("選択変数のデータ一覧",
-                   h2("データ一覧"),
-                   DT::dataTableOutput("table_for_plot")
+  # 1. 全体をまず左右に分ける（これが常に共通して表示される土台になります）
+  sidebarLayout(  
+    
+    # 【左側】共通の変数選択パネル
+    sidebarPanel(
+      fileInput("rda_file", "RDAファイルを選択", accept = ".rda"),
+      uiOutput("rda_objects_ui"),
+      uiOutput("variables_ui"),
+      tags$hr(),
+      uiOutput("cross_var_ui"),
+      uiOutput("layer_var_ui"),
+      uiOutput("variables2_ui"),
+      uiOutput("hist_var_ui")
+    ),
+    
+    # 【右側】ここを上部メニュータブで切り替える構造にする
+    mainPanel(
+      tabsetPanel(
+        id = "main_tabs", 
+        type = "tabs",
+        
+        # ----- 大分類 1: 基本集計 -----
+        tabPanel(
+          "基本集計",
+          tabsetPanel(
+            type = "tabs",
+            tabPanel("単変数集計",
+                     h2("棒グラフと度数分布"),
+                     plotOutput("barchart"),
+                     DT::dataTableOutput("simple_table")
+            )
           )
-        )  # ← tabsetPanel の閉じかっこ
-      )    # ← mainPanel の閉じかっこ
-    )      # ← sidebarLayout の閉じかっこ
-  )        # ← tabPanel("基本集計") の閉じかっこ
-)          # ← fluidPage の閉じかっこ
+        ),
+        
+        # ----- 大分類 2: ２変数多変数分析 -----
+        tabPanel(
+          "２変数多変数分析",
+          tabsetPanel(
+            type = "tabs",
+            tabPanel("2変数分析",
+                     h2("クロス集計（gtsummary::tbl_cross )"),
+                     gt_output(outputId = "my_gt_table2"),
+                     plotOutput("crosschart", width = 600, height = 600),
+                     h3("χ2乗検定"),
+                     verbatimTextOutput("chisq_test2"),
+                     h3("クロス表の対応分析"),
+                     plotOutput("Crosstable_CA")
+            ),
+            tabPanel("pairs",
+                     h2("GGally::pairs"),
+                     plotOutput("pairs", width = 600, height = 600)
+            ),
+            tabPanel("pairs_multi",
+                     h2("GGally::pairs 多変数"),
+                     plotOutput("pairs_multi", width = 900, height = 900)
+            ),
+            tabPanel("2変数分析（層化）",
+                     h2("クロス集計（gtsummary::tbl_cross )"),
+                     gt_output(outputId = "my_gt_table"),
+                     plotOutput("crosschart2", width = 900, height = 600),
+                     h3("χ2乗検定"),
+                     verbatimTextOutput("chisq_test")
+            ),
+            tabPanel("Grid回答 General mosaic表示",
+                     h2("Grid回答mosaic表示"),
+                     plotOutput("GridAnswerG_mosaic", height = "80vh"),#width = 600, height = 600),
+                     plotOutput("GridAnswerG_CA", width = 900)#, height = 700)
+            )
+          )
+        ),
+        
+        # ----- 大分類 3: MA分析 -----
+        tabPanel(
+          "MA分析",
+          tabsetPanel(
+            type = "tabs",
+            tabPanel("MA plot(Bar)",
+                     h2("MA変数集計"),
+                     plotOutput("MAplot", width = 600, height = 600)
+            ),
+            tabPanel("MA plot(Dot)",
+                     h2("MA変数集計"),
+                     plotOutput("MAplot_Dot", width = 600, height = 600)
+            ),
+            tabPanel("層化 MA plot",
+                     h2("層化MA変数集計"),
+                     plotOutput("MAplot_lineDot", width = 600, height = 400),
+                     plotOutput("MAplot_lineDotwarp", width = 600, height = 600)
+            ),
+            tabPanel("層化 MA plot2",
+                     h2("層化MA変数集計（Legendなし）"),
+                     plotOutput("MAplot_lineDot2", width = 600, height = 400),
+                     plotOutput("MAplot_lineDotwarp", width = 600, height = 600)
+            )
+          )
+        ),
+        
+        # ----- 大分類 4: 変数確認 -----
+        tabPanel(
+          "変数確認",      
+          tabsetPanel(
+            type = "tabs",
+            tabPanel("単変数check",
+                     h2("棒グラフと度数分布"),
+                     plotOutput("barchart2"),
+                     DT::dataTableOutput("simple_table2")
+            ),
+            tabPanel("選択変数のデータ一覧",
+                     h2("データ一覧"),
+                     DT::dataTableOutput("table_for_plot")
+            )
+          )
+        ) 
+        
+      ) # 外側 tabsetPanel の閉じ
+    ) # mainPanel の閉じ
+  ) # sidebarLayout の閉じ
+) # fluidPage の閉じ
 
+
+# ui <- fluidPage(
+#   titlePanel(paste("ENQview_lite  Version:", app_version)),
+#   
+# sidebarLayout(  
+# 
+# #tabPanel(
+# #    "基本集計",
+#     sidebarLayout(   # ← ★ ここを sidebarLayout() に変更！
+#       sidebarPanel(
+#         fileInput("rda_file", "RDAファイルを選択", accept = ".rda"),
+#         uiOutput("rda_objects_ui"),
+#         uiOutput("variables_ui"),
+#         tags$hr(),
+#         uiOutput("cross_var_ui"),
+#         uiOutput("layer_var_ui"),
+#         uiOutput("variables2_ui"),
+#         uiOutput("hist_var_ui")
+#       ),
+#       
+#     mainPanel(
+#       tabsetPanel(
+#           id = "main_tabs", 
+#           type = "tabs",
+#           # -- Group 1 -----
+#       tabPanel(
+#           "基本集計",
+#         tabsetPanel(
+#           type="tabs",
+#           tabPanel("単変数集計",
+#                    h2("棒グラフと度数分布"),
+#                    plotOutput("barchart"),
+#                    DT::dataTableOutput("simple_table")
+#           ),
+#         ),
+#         ),
+#       tabPanel(
+#           "２変数多変数分析",
+#           tabPanel("2変数分析",
+#                    h2("クロス集計（gtsummary::tbl_cross )"),
+#                    gt_output(outputId = "my_gt_table2"),
+#                    plotOutput("crosschart", width = 600, height = 600),
+#                    h3("χ2乗検定"),
+#                    verbatimTextOutput("chisq_test2"),
+#                    h3("クロス表の対応分析"),
+#                    plotOutput("Crosstable_CA")
+#           ),
+#           
+#           tabPanel("pairs",
+#                    h2("GGally::pairs"),
+#                    plotOutput("pairs", width = 600, height = 600)
+#           ),
+#           
+#           tabPanel("pairs_multi",
+#                    h2("GGally::pairs 多変数"),
+#                    plotOutput("pairs_multi", width = 900, height = 900)
+#           ),
+#           
+#           tabPanel("2変数分析（層化）",
+#                    h2("クロス集計（gtsummary::tbl_cross )"),
+#                    gt_output(outputId = "my_gt_table"),
+#                    plotOutput("crosschart2", width = 900, height = 600),
+#                    h3("χ2乗検定"),
+#                    verbatimTextOutput("chisq_test")
+#           ),
+#           
+#           tabPanel("Grid回答 General mosaic表示",
+#                    h2("Grid回答mosaic表示"),
+#                    plotOutput("GridAnswerG_mosaic", width = 600, height = 600),
+#                    plotOutput("GridAnswerG_CA", width = 700, height = 700)
+#           ),
+#       ),
+#       tabPanel(
+#         "MA分析",
+#           tabPanel("MA plot(Bar)",
+#                    h2("MA変数集計"),
+#                    plotOutput("MAplot", width = 600, height = 600)
+#           ),
+#           
+#           tabPanel("MA plot(Dot)",
+#                    h2("MA変数集計"),
+#                    plotOutput("MAplot_Dot", width = 600, height = 600)
+#           ),
+#           
+#           tabPanel("層化 MA plot",
+#                    h2("層化MA変数集計"),
+#                    plotOutput("MAplot_lineDot", width = 600, height = 400),
+#                    plotOutput("MAplot_lineDotwarp", width = 600, height = 600)
+#           ),
+#           
+#           tabPanel("層化 MA plot2",
+#                    h2("層化MA変数集計（Legendなし）"),
+#                    plotOutput("MAplot_lineDot2", width = 600, height = 400),
+#                    plotOutput("MAplot_lineDotwarp", width = 600, height = 600)
+#           ),
+#       ),
+#       tabPanel(
+#         "変数確認",      
+#           tabPanel("単変数check",
+#                    h2("棒グラフと度数分布"),
+#                    plotOutput("barchart2"),
+#                    DT::dataTableOutput("simple_table2")
+#           ),
+#           
+#           tabPanel("選択変数のデータ一覧",
+#                    h2("データ一覧"),
+#                    DT::dataTableOutput("table_for_plot")
+#           )
+#         )  # ← tabsetPanel の閉じかっこ
+#       )    # ← mainPanel の閉じかっこ
+#     )      # ← sidebarLayout の閉じかっこ
+#   )        # ← tabPanel("基本集計") の閉じかっこ
+# )          # ← fluidPage の閉じかっこ
+# )
 
 server <- function(input, output, session) {
   # .rdaファイルから処理対象のdatasetを選択する------
