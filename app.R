@@ -30,8 +30,11 @@ if (file.exists("DESCRIPTION")) {
   app_version <- "3.xx-explor-fix"
 }
 
-ui <- fluidPage(
-  titlePanel(paste("ENQview_lite  Version:", app_version)),
+#ui <- fluidPage(
+ui <- navbarPage(
+  tabPanel("概要",
+             h2(paste("ENQview_lite  Version:", app_version))
+  ),
 
   tabPanel(
     "基本集計",
@@ -55,8 +58,9 @@ ui <- fluidPage(
                    h2("棒グラフと度数分布"),
                    plotOutput("barchart"),
                    DT::dataTableOutput("simple_table")
-          ),
-
+          )
+        )),
+      
           tabPanel("2変数分析",
                    h2("クロス集計（gtsummary::tbl_cross )"),
                    gt_output(outputId = "my_gt_table2"),
