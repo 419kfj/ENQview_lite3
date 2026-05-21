@@ -201,18 +201,9 @@ server <- function(input, output, session) {
                 choices = c(" ", names(data.df())))
   })
 
-  # output$variable_ui <- renderUI({
-  #   req(data.df())
-  #   selectInput("select_input_data_for_layer", "層変数を選択",
-  #               choices = c(" ", names(data.df())))
-  # })
-
-
   # データフレームの列をチェックボックスで選択
   output$variables_ui <- renderUI({
     req(data.df())
-#    checkboxGroupInput("variables", "列を選択",
-#    radioButtons("variables", "列を選択",
     selectInput("variables", "変数を選択",
                        choices = names(data.df()),
                        selected = names(data.df())[1],
