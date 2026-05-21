@@ -30,13 +30,9 @@ if (file.exists("DESCRIPTION")) {
   app_version <- "3.xx-explor-fix"
 }
 
-#ui <- fluidPage(
-#  titlePanel(paste("ENQview_lite  Version:", app_version)),
-
-ui <- navbarPage(
-  h2(paste("ENQview_lite  Version:", app_version)),
+ui <- fluidPage(
+  titlePanel(paste("ENQview_lite  Version:", app_version)),
   
-
   tabPanel(
     "基本集計",
     sidebarLayout(   # ← ★ ここを sidebarLayout() に変更！
@@ -95,77 +91,43 @@ ui <- navbarPage(
                    plotOutput("GridAnswerG_CA", width = 700, height = 700)
           ),
           
-   
+          tabPanel("MA plot(Bar)",
+                   h2("MA変数集計"),
+                   plotOutput("MAplot", width = 600, height = 600)
+          ),
           
+          tabPanel("MA plot(Dot)",
+                   h2("MA変数集計"),
+                   plotOutput("MAplot_Dot", width = 600, height = 600)
+          ),
+          
+          tabPanel("層化 MA plot",
+                   h2("層化MA変数集計"),
+                   plotOutput("MAplot_lineDot", width = 600, height = 400),
+                   plotOutput("MAplot_lineDotwarp", width = 600, height = 600)
+          ),
+          
+          tabPanel("層化 MA plot2",
+                   h2("層化MA変数集計（Legendなし）"),
+                   plotOutput("MAplot_lineDot2", width = 600, height = 400),
+                   plotOutput("MAplot_lineDotwarp", width = 600, height = 600)
+          ),
+          
+          tabPanel("単変数check",
+                   h2("棒グラフと度数分布"),
+                   plotOutput("barchart2"),
+                   DT::dataTableOutput("simple_table2")
+          ),
+          
+          tabPanel("選択変数のデータ一覧",
+                   h2("データ一覧"),
+                   DT::dataTableOutput("table_for_plot")
+          )
         )  # ← tabsetPanel の閉じかっこ
       )    # ← mainPanel の閉じかっこ
     )      # ← sidebarLayout の閉じかっこ
-  ),        # ← tabPanel("基本集計") の閉じかっこ
-
-  tabPanel("panel 1",
-           "one"
-  ),
-  
-  tabPanel("panel 2",
-           "two"
-  ),
-  tabPanel("MA分析",
-           sidebarLayout(
-             sidebarPanel(
-               
-             ),
-             mainPanel(
-               tabsetPanel(
-               tabPanel("MA plot(Bar)",
-                        h2("MA変数集計"),
-                        plotOutput("MAplot", width = 600, height = 600)
-               ),
-               
-               tabPanel("MA plot(Dot)",
-                        h2("MA変数集計"),
-                        plotOutput("MAplot_Dot", width = 600, height = 600)
-               ),
-               
-               tabPanel("層化 MA plot",
-                        h2("層化MA変数集計"),
-                        plotOutput("MAplot_lineDot", width = 600, height = 400),
-                        plotOutput("MAplot_lineDotwarp", width = 600, height = 600)
-               ),
-               
-               tabPanel("層化 MA plot2",
-                        h2("層化MA変数集計（Legendなし）"),
-                        plotOutput("MAplot_lineDot2", width = 600, height = 400),
-                        plotOutput("MAplot_lineDotwarp", width = 600, height = 600)
-               ),
-               )
-             )
-           )
-           
-     ),
-
-  tabPanel("変数確認",
-           sidebarLayout(
-             sidebarPanel(
-               wellPanel(
-                 h3("補助表示"),
-                 uiOutput("hist_var_ui")
-               )
-             ),
-             
-             mainPanel(
-               tabPanel("単変数check",
-                        h2("棒グラフと度数分布"),
-                        plotOutput("barchart2"),
-                        DT::dataTableOutput("simple_table2")
-               ),
-               
-               tabPanel("選択変数のデータ一覧",
-                        h2("データ一覧"),
-                        DT::dataTableOutput("table_for_plot")
-               )
-             )
-           ))
-)          # ← favbarPage #fiudPage の閉じかっこ
+  )        # ← tabPanel("基本集計") の閉じかっこ
+)          # ← fluidPage の閉じかっこ
 
 
 server <- function(input, output, session) {
